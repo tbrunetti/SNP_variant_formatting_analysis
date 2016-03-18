@@ -9,9 +9,9 @@ import os
 #sys.argv[2] is KAVIAR vcf library
 def findVariant(pathToVCF):
 	os.chdir(pathToVCF)
-	for vcfFile in sys.argv[1]:
-		if vcfFile in os.listdir(pathToVCF):
-			
+	for line in sys.argv[1]:
+		if line.rstrip('\n') in os.listdir(pathToVCF):
+
 
 
 if __name__=='__main__':
