@@ -1,8 +1,12 @@
 #output of this script is used as input into vafViolinPlot.R
 import sys
 import os
+
+
 #sys.argv[1]=a single column list of exact VCF names to analyze
 def FFPE_mutation_detection_format(pathToVCF):
+	#creates the final output file
+	#can change name/directory as needed
 	f=open('/home/tonya/pancan/vaf_by_substitution.txt', 'w')
 	os.chdir(pathToVCF)
 	#open the list of VCFs to analyze
