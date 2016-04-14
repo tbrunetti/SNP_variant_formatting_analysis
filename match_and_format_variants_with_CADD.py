@@ -81,8 +81,9 @@ def findCADD(pathToVCF, pathToCADDfile, pathToMergedFiles):
 
 			os.chdir(pathToMergedFiles)
 			for i in range(0, len(sortedTempVCF)):
+				#checkpoint to determine if a CADD score has been identified
+				checkpoint=0
 				for x in range(0, len(sortedTempCADD)):
-					checkpoint=0
 					if sortedTempVCF[i][0]==sortedTempCADD[x][0] and sortedTempVCF[i][1]==sortedTempCADD[x][1]:
 						for z in range(0, len(sortedTempVCF[i])):
 							f.write(sortedTempVCF[i][z]+'\t')
