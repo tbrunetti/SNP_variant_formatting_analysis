@@ -1,9 +1,11 @@
 import sys
 import pandas
 import os
+from operator import itemgetter
 #sys.argv[1] is a txt file with a list of names of VCFs to format, headers included; one name per line
 #designate location of VCFs in pathToVCF variable
 
+#format VCFs for input into CADD database
 def formatForCADDinput(pathToVCF, pathToOutput):
 	#sets default output path to pathToVCF if path is not specified
 	if pathToOutput=='':
@@ -31,15 +33,76 @@ def formatForCADDinput(pathToVCF, pathToOutput):
 			else:
 				print str(line)+' does not exist in directory'
 
-#sys.argv[1]=txt file of list of VCFs to add CADD scores
+#sys.argv[1]=txt file of list of VCFs to add CADD scores and matching CADD output file name
+#format -> exact VCF file name, exact CADD output file name
 #NOTE: file from CADD database is required!!!!
-def findCADD(pathToVCF, pathToOutput):
-	print "unfinished"
+
+def findCADD(pathToVCF, pathToCADDfile, pathToMergedFiles):
+	with open(sys.argv[1]) as input:
+		for line in input:
+			line=line.split(',')
+			os.chdir(pathToVCF)
+			tempVCF=[]
+			tempCADD=[]
+			with open(line[0]) as input:
+				#keep in mind, first row is header information
+				for row in input:
+					row=row.split('\t')
+					#removes EOL
+					row[len(row)-1]=row[len(row)-1].rstrip('\n'))
+					tempVCF.append(row)
+				#changes directory to final file output so new file can be created
+				os.chdir(pathToMergedFiles)
+				f=open(str(line[0][:-4])+-'matched-CADD-scores.txt', 'w')
+				#adds the header to the file
+				for i in range(0, len(tempVCF[0])-1):
+					f.write(tempVCF[0][i]+'\t')
+				f.write(tempVCF[0][len(tempVCF)-1]+'\t'+'CADD_rawScore'+'\t'+'CADD_PHRED'+'\n')
+				#removes the header index from VCF, so not included in CADD match
+				tempVCF.pop(0)
+			#sort tempVCF by chromosome, to make comparisons run faster in code
+			sortedTempVCF=sorted(tempVCF, key=itemgetter(0))
+			
+
+			os.chdir(pathToCADDfile)
+			with open(line[1]) as input:
+				for row in input:
+					#skips the header lines in the CADD output
+					if '#' in row:
+						continue;
+					row=row.split('\t')
+					#to keep consistent formatting with VCF files, making search easier
+					row[0]='chr'+str(row[0])
+					row[len(row)-1]=row[len(row)-1].rstrip('\n')
+					tempCADD.append(row)
+			#sorted, just to make comparisons run faster in code
+			sortedTempCADD=sorted(tempCADD, key=itemgetter(0))
+			
+
+			os.chdir(pathToMergedFiles)
+			for i in range(0, len(sortedTempVCF)):
+				for x in range(0, len(sortedTempCADD)):
+					checkpoint=0
+					if sortedTempVCF[i][0]==sortedTempCADD[x][0] and sortedTempVCF[i][1]==sortedTempCADD[x][1]:
+						for z in range(0, len(sortedTempVCF[i])):
+							f.write(sortedTempVCF[i][z]+'\t')
+						f.write(sortedTempCADD[x][4]+'\t'+sortedTempCADD[x][5]+'\n')
+						#critical to have checkpoint to make sure those SNPs that did not have an
+						#associated CADD score are still listed in the final output
+						checkpoint+=1
+						break;
+				#means CADD score not available for particular SNP
+				if checkpoint==0:
+					for j in range(0, len(sortedTempVCF)-1):
+						f.write(sortedTempVCF[i][j]+'\t')
+					f.write(sortedTempVCF[i][len(sortedTempVCF)-1]+'\n')
 
 
 if __name__=='__main__':
 	#change to VCF location
 	pathToVCF='/home/tonya/pan_can_project/panData_UCretro_DNA_mutations/patient-files-offtargets-removed-headers-added/'
 	pathToOutput='/home/tonya/pan_can_project/panData_UCretro_DNA_mutations/CADD-formatted-off-targets-removed/'
-	formatForCADDinput(pathToVCF, pathToOutput);
-	#findCADD(pathToVCF, pathToOutput);
+	pathToCADDfile='/home/tonya/pan_can_project/panData_UCretro_DNA_mutations/CADD-output/'
+	pathToMergedFiles='/home/tonya/pan_can_project/panData_UCretro_DNA_mutations/CADD-matched-with-VCF/'
+	#formatForCADDinput(pathToVCF, pathToOutput);
+	findCADD(pathToVCF, pathToCADDfile, pathToMergedFiles);
