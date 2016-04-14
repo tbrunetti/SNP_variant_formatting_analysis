@@ -57,7 +57,7 @@ def findCADD(pathToVCF, pathToCADDfile, pathToMergedFiles):
 				#adds the header to the file
 				for i in range(0, len(tempVCF[0])-1):
 					f.write(str(tempVCF[0][i])+'\t')
-				f.write(str(tempVCF[0][len(tempVCF[0])-1])+'\t'+'CADD_rawScore'+'\t'+'CADD_PHRED'+'\n')
+				f.write(str(tempVCF[0][len(tempVCF[0])-1])+'\t'+'CADD_rawScore'+'\t'+'CADD-scaled_Cscore'+'\n')
 				#removes the header index from VCF, so not included in CADD match
 				tempVCF.pop(0)
 			#sort tempVCF by chromosome, to make comparisons run faster in code
