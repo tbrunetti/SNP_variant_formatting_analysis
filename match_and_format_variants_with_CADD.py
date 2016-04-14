@@ -34,7 +34,7 @@ def formatForCADDinput(pathToVCF, pathToOutput):
 				print str(line)+' does not exist in directory'
 
 #sys.argv[1]=txt file of list of VCFs to add CADD scores and matching CADD output file name
-#format -> exact VCF file name, exact CADD output file name
+#format -> exact VCF file name,exact CADD output file name
 #NOTE: file from CADD database is required!!!!
 
 def findCADD(pathToVCF, pathToCADDfile, pathToMergedFiles):
@@ -49,15 +49,15 @@ def findCADD(pathToVCF, pathToCADDfile, pathToMergedFiles):
 				for row in input:
 					row=row.split('\t')
 					#removes EOL
-					row[len(row)-1]=row[len(row)-1].rstrip('\n'))
+					row[len(row)-1]=row[len(row)-1].rstrip('\n')
 					tempVCF.append(row)
 				#changes directory to final file output so new file can be created
 				os.chdir(pathToMergedFiles)
-				f=open(str(line[0][:-4])+-'matched-CADD-scores.txt', 'w')
+				f=open(str(line[0][:-4])+'-matched-CADD-scores.txt', 'w')
 				#adds the header to the file
 				for i in range(0, len(tempVCF[0])-1):
-					f.write(tempVCF[0][i]+'\t')
-				f.write(tempVCF[0][len(tempVCF)-1]+'\t'+'CADD_rawScore'+'\t'+'CADD_PHRED'+'\n')
+					f.write(str(tempVCF[0][i])+'\t')
+				f.write(str(tempVCF[0][len(tempVCF[0])-1])+'\t'+'CADD_rawScore'+'\t'+'CADD_PHRED'+'\n')
 				#removes the header index from VCF, so not included in CADD match
 				tempVCF.pop(0)
 			#sort tempVCF by chromosome, to make comparisons run faster in code
@@ -65,7 +65,7 @@ def findCADD(pathToVCF, pathToCADDfile, pathToMergedFiles):
 			
 
 			os.chdir(pathToCADDfile)
-			with open(line[1]) as input:
+			with open(line[1].rstrip('\n')) as input:
 				for row in input:
 					#skips the header lines in the CADD output
 					if '#' in row:
@@ -86,8 +86,8 @@ def findCADD(pathToVCF, pathToCADDfile, pathToMergedFiles):
 				for x in range(0, len(sortedTempCADD)):
 					if sortedTempVCF[i][0]==sortedTempCADD[x][0] and sortedTempVCF[i][1]==sortedTempCADD[x][1]:
 						for z in range(0, len(sortedTempVCF[i])):
-							f.write(sortedTempVCF[i][z]+'\t')
-						f.write(sortedTempCADD[x][4]+'\t'+sortedTempCADD[x][5]+'\n')
+							f.write(str(sortedTempVCF[i][z])+'\t')
+						f.write(str(sortedTempCADD[x][4])+'\t'+str(sortedTempCADD[x][5])+'\n')
 						#critical to have checkpoint to make sure those SNPs that did not have an
 						#associated CADD score are still listed in the final output
 						checkpoint+=1
@@ -95,8 +95,8 @@ def findCADD(pathToVCF, pathToCADDfile, pathToMergedFiles):
 				#means CADD score not available for particular SNP
 				if checkpoint==0:
 					for j in range(0, len(sortedTempVCF)-1):
-						f.write(sortedTempVCF[i][j]+'\t')
-					f.write(sortedTempVCF[i][len(sortedTempVCF)-1]+'\n')
+						f.write(str(sortedTempVCF[i][j])+'\t')
+					f.write(str(sortedTempVCF[i][len(sortedTempVCF)-1])+'\n')
 
 
 if __name__=='__main__':
