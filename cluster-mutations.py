@@ -4,8 +4,8 @@ from operator import itemgetter
 import pandas
 import seaborn as sns
 
-#sys.argv[1] input data format
-
+#sys.argv[1] input data format is output from match_and_format_variants_with_CADD
+#make sure 0=patientID, 7=gene, 16=CADD score, if all other fields are padded, code should work
 def makeCluster():
 	#key=patID, value=list of predicted protein function loss
 	patientMutations={}
