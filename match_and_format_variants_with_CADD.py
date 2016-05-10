@@ -23,7 +23,7 @@ def formatForCADDinput(pathToVCF, pathToOutput):
 						line=line.split('\t')
 						headerExtracted+=1
 						if headerExtracted==1:
-							header=[line[i] for i in range(len(line))]
+							header=[line[i].lower() for i in range(len(line))]
 						else:
 							temp.append(line)
 					dataframe=pandas.DataFrame(temp, columns=header)
@@ -33,7 +33,7 @@ def formatForCADDinput(pathToVCF, pathToOutput):
 			else:
 				print str(line)+' does not exist in directory'
 
-#sys.argv[1]=txt file of list of VCFs to add CADD scores and matching CADD output file name
+#sys.argv[1]=txt file of list of VCFs (with headers) to add CADD scores and matching CADD output file name
 #format -> exact VCF file name,exact CADD output file name
 #NOTE: file from CADD database is required!!!!
 
@@ -50,6 +50,9 @@ def findCADD(pathToVCF, pathToCADDfile, pathToMergedFiles):
 					row=row.split('\t')
 					#removes EOL
 					row[len(row)-1]=row[len(row)-1].rstrip('\n')
+					for n, i in enumerate(row):
+						if i=='':
+							row[n]='NA'
 					tempVCF.append(row)
 				#changes directory to final file output so new file can be created
 				os.chdir(pathToMergedFiles)
@@ -74,6 +77,9 @@ def findCADD(pathToVCF, pathToCADDfile, pathToMergedFiles):
 					#to keep consistent formatting with VCF files, making search easier
 					row[0]='chr'+str(row[0])
 					row[len(row)-1]=row[len(row)-1].rstrip('\n')
+					for n, i in enumerate(row):
+						if i=='':
+							row[n]='NA'
 					tempCADD.append(row)
 			#sorted, just to make comparisons run faster in code
 			sortedTempCADD=sorted(tempCADD, key=itemgetter(0))
@@ -171,11 +177,11 @@ def matchCADDtoSIFTformat(pathToSIFTformat, pathToCADDfile, pathToMergedFiles):
 
 if __name__=='__main__':
 	#change to VCF location
-	pathToVCF='/home/tonya/pan_can_project/panData_UCretro_DNA_mutations/patient-files-offtargets-removed-headers-added/'
-	pathToOutput='/home/tonya/pan_can_project/panData_UCretro_DNA_mutations/CADD-formatted-off-targets-removed/'
-	pathToCADDfile='/home/tonya/pan_can_project/panData_UCretro_DNA_mutations/CADD-output/'
-	pathToMergedFiles='/home/tonya/pan_can_project/panData_UCretro_DNA_mutations/match-SIFT-CADD/'
-	pathToSIFTformat='/home/tonya/pan_can_project/panData_UCretro_DNA_mutations/tab-delimited-SIFT-predictions'
+	#pathToVCF='/home/tonya/pan_can_project/panData_UCprospective_DNA_mutations/patient-files-offtargets-removed-headers-added/'
+	#pathToOutput='/home/tonya/pan_can_project/panData_UCprospective_DNA_mutations/CADD-formatted-off-targets-removed-UCprospective/'
+	pathToCADDfile='/home/tonya/pan_can_project/panData_UCprospective_DNA_mutations/CADD-output-UCpro/'
+	pathToMergedFiles='/home/tonya/pan_can_project/panData_UCprospective_DNA_mutations/CADD-matched-VCF-UCpro/'
+	pathToSIFTformat='/home/tonya/pan_can_project/panData_UCprospective_DNA_mutations/tab_delimited_SIFT_files_prospective/'
 	#formatForCADDinput(pathToVCF, pathToOutput);
 	#findCADD(pathToVCF, pathToCADDfile, pathToMergedFiles);
 	matchCADDtoSIFTformat(pathToSIFTformat, pathToCADDfile, pathToMergedFiles);
