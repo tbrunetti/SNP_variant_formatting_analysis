@@ -13,9 +13,10 @@ def makeCluster():
 	patientMutationsCADD={}
 	numberDiffentGenes=[]
 	with open(sys.argv[1]) as input:
+		headers=next(input)
 		for line in input:
 			line=line.split('\t')
-			#line[3] is the name of the mutated gene
+			#line[7] is the name of the mutated gene
 			numberDiffentGenes.append(line[7])
 			#line[0] is the patientID
 			if line[0] in patientMutations:
@@ -38,13 +39,15 @@ def makeCluster():
 	#removes all genes that only appear once, to help reduce noise in data set
 	removeSingletons={}
 	for key in totalGenesMuts:
-		if totalGenesMuts[key]<=7:
+		if totalGenesMuts[key]<=0:
 			continue;
 		else:
 			removeSingletons[key]=totalGenesMuts[key]
 
 	print len(removeSingletons) 
 	genesToConsider=[key for key in removeSingletons]
+	for i in range(len(genesToConsider)):
+		print genesToConsider[i]
 	#print patientMutations
 	#sortByFreq=Counter(removeSingletons).most_common(101)
 	#orderToSort=[sortByFreq[x][0] for x in range(0, len(sortByFreq))]
