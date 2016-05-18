@@ -39,7 +39,7 @@ def makeCluster():
 	#removes all genes that only appear once, to help reduce noise in data set
 	removeSingletons={}
 	for key in totalGenesMuts:
-		if totalGenesMuts[key]<=0:
+		if totalGenesMuts[key]<=1:
 			continue;
 		else:
 			removeSingletons[key]=totalGenesMuts[key]
@@ -65,7 +65,7 @@ def makeCluster():
 	dataframe=pandas.DataFrame(listOfpatsWithMutCounts, columns=['patientID', 'gene_mutated', 'frequency'])
 	#print dataframe
 	dataframe=dataframe.pivot("patientID", "gene_mutated", "frequency")
-	clusterData=sns.clustermap(dataframe, method='weighted', metric='euclidean')
+	clusterData=sns.clustermap(dataframe, method='weighted', metric='jaccard')
 	sns.plt.show()
 
 	#cluster data similar to above, but hue is now CADD score
@@ -92,7 +92,8 @@ def makeCluster():
 	clusterCADDdata=sns.clustermap(dataframeCADD, method='single', metric='euclidean', cmap='hot_r')
 	sns.plt.show()
 
-def input_ROCKclustering_in_R():
+#this function properly formats data for use in PCA, MCA, and some clustering algorithms implemented in R
+def input_clustering_PCA_MCA_in_R():
 	#key=patID, value=list of predicted protein function loss
 	patientMutations={}
 	#stores list of all genes (including redundant), predicted for loss of protein function
@@ -121,12 +122,31 @@ def input_ROCKclustering_in_R():
 		else:
 			removeSingletons[key]=totalGenesMuts[key]
 
-	print len(removeSingletons) 
-	f=open('gene_for_downstream_analysis.txt', 'w')
+	#a list of genes that are being considered for downstream analysis, dependend upon above loop filtering
 	genesToConsider=[key for key in removeSingletons]
-	for i in genesToConsider:
-		f.write(str(genesToConsider[i])+'\n')
+
+	f1=open('PDAC-patients-mutations-profile-minCADD_15_nonsyn-splice-gain-loss-stops-starts.txt', 'w')
+	f1.write('patientID'+'\t')
+	for x in range(0, len(genesToConsider)-1):
+		f1.write(genesToConsider[x]+'\t')
+	f1.write(genesToConsider[len(genesToConsider)-1]+'\n')
+
+	
+	#writes tab delimited file with one row per patient and columns are all possible gene mutations
+	#1 for mutation present 0 for no mutation called
+	for key in patientMutations:
+		f1.write(str(key)+'\t')
+		for i in range(0, len(genesToConsider)-1):
+			if genesToConsider[i] in patientMutations[key]:
+				f1.write('1'+'\t')
+			else:
+				f1.write('0'+'\t')
+		if genesToConsider[len(genesToConsider)-1] in patientMutations[key]:
+			f1.write('1'+'\n')
+		else:
+			f1.write('0'+'\n')
+
 
 if __name__=='__main__':
-	makeCluster();
-	#input_ROCKclustering_in_R();
+	#makeCluster();
+	input_clustering_PCA_MCA_in_R();
