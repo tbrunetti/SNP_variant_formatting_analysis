@@ -47,10 +47,66 @@ def makeBoxplot(totalVarsPerPatient):
 			title='Retrosepctive Pancreatic Cancer Variants from University of Chicago',
 			yaxis=dict(title='log10(variant number)'))
 		})
-		
+
+#sys.argv[1]=tab-delimited file, each line is one variant of a patient (PDAC)
+#sys.argv[2]=tab-delimited file, each line is one variant of a patient (nonPDAC)
+#first column is patientID, 8th column is mutation type, rest of columns need to have space hold
+def deleteriousVariants():
+	patientVariantsPDAC={}
+	with open(sys.argv[1]) as input:
+		headersPDAC=next(input)
+		for line in input:
+			line=line.split('\t')
+			if line[0] in patientVariantsPDAC:
+				patientVariantsPDAC[line[0]]=patientVariantsPDAC[line[0]]+[line[8]]
+			else:
+				patientVariantsPDAC[line[0]]=[line[8]]
+
+	patientVariantsNonPDAC={}
+	with open(sys.argv[2]) as input:
+		headersNonPDAC=next(input)
+		for line in input:
+			line=line.split('\t')
+			if line[0] in patientVariantsNonPDAC:
+				patientVariantsNonPDAC[line[0]]=patientVariantsNonPDAC[line[0]]+[line[8]]
+			else:
+				patientVariantsNonPDAC[line[0]]=[line[8]]
+
+	numberOfDelMutationsPDAC=[len(patientVariantsPDAC[key]) for key in patientVariantsPDAC]
+	numberOfDelMutationsNonPDAC=[len(patientVariantsNonPDAC[key]) for key in patientVariantsNonPDAC]
+
+	trace0=go.Box(
+		y=numberOfDelMutationsPDAC,
+		boxpoints='Outliers',
+		name='PDAC')
+
+	trace1=go.Box(
+		y=numberOfDelMutationsNonPDAC,
+		boxpoints='Outliers',
+		name='non-PDAC')
+
+	plotly.offline.plot({
+		"data":[trace0, trace1],
+		"layout":go.Layout(
+			title='Deleterious variant calls of UC retrosepctive patients',
+			xaxis=dict(tickfont=dict(
+				size=18)),
+			yaxis=dict(title='total variants', 
+				titlefont=dict(size=18)),
+			margin=go.Margin(
+				l=450,
+				r=450))
+		})
+
+	print "The mean number of variants in a PDAC patient is "+ str(np.average(numberOfDelMutationsPDAC))
+	print "The median number of variants in a PDAC patient is "+ str(np.median(numberOfDelMutationsPDAC))
+	print "The mean number of variants in a non-PDAC patient is "+ str(np.average(numberOfDelMutationsNonPDAC))
+	print "The median number of variants in a non-PDAC patient is "+ str(np.median(numberOfDelMutationsNonPDAC))
+	
 
 	
 if __name__=='__main__':
 	directoryPatientVariants='/home/tonya/pan_can_project/panData_UCprospective_DNA_mutations/variant-viewer-files-offtargets-removed'
-	totalVarsPerPatient=variantStats(directoryPatientVariants);
+	#totalVarsPerPatient=variantStats(directoryPatientVariants);
 	#makeBoxplot(totalVarsPerPatient);
+	deleteriousVariants();
