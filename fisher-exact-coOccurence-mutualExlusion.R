@@ -1,6 +1,7 @@
 library("bpcp")
 library("exact2x2")
 
+
 #makes a pre-allocated (faster) output dataframe
 numRows=nrow(co.occurence.mutual.exlusion.counts.PDAC.only.minCADD15.starts.stops.gains.losses.nonsyn.splice)
 numCols=9
@@ -79,4 +80,5 @@ for (i in 1:numRows){
     print(paste(outData$geneA[i], outData$geneB[i]))
   }
 }
+print(count)
 
