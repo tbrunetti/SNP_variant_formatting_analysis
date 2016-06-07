@@ -9,11 +9,10 @@ def formatBed_funseq(pathToVCF):
 			os.chdir(pathToVCF)
 			with open(line.rstrip('\n')) as input:
 				os.chdir(pathToOutput)
-				f=open(str(line[:-4])+'-'+'input-funseq.txt', 'w')
+				f=open(str(line[:-5].rstrip('\n'))+'-'+'input-funseq.txt', 'w')
 				for variant in input:
 					variant=variant.split('\t')
-					print variant
-					f.write(str(variant[0])+'\t'+str((float(variant[1])-1))+'\t'+str(float(variant[1]))+'\t'+str(variant[2])+'\t'+str(variant[3])+'\n')
+					f.write(str(variant[0])+'\t'+str((int(variant[1])-1))+'\t'+str(int(variant[1]))+'\t'+str(variant[2])+'\t'+str(variant[3])+'\n')
 
 
 if __name__=='__main__':
