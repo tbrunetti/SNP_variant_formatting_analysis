@@ -35,7 +35,7 @@ def capturePanel_To_SNParray():
 					except KeyError:
 						print "Error, key does not exist"
 		except KeyError:
-			print "Error, key does not exist (2)"
+			print "Error, key "+ str(key)+ " does not exist (2)"
 
 	print 'The total number capture regions covered by the SNP array is '+ str(len(set(matchedRegions)))
 
