@@ -87,6 +87,8 @@ if __name__=='__main__':
 	#value=list of genes mutated
 	patientMuts={}
 	with open(sys.argv[1]) as input:
+		#if no headers, this can be commented out
+		headers=next(input)
 		for line in input:
 			line=line.split('\t')
 			genesRepresented.append(line[7])
