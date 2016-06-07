@@ -119,7 +119,7 @@ def matchCADDtoSIFTformat(pathToSIFTformat, pathToCADDfile, pathToMergedFiles):
 			with open(line[0]) as input:
 				#keep in mind, first row is header information
 				for row in input:
-					row=row.split('\t')
+					row=row.split(',')
 					#removes EOL
 					row[len(row)-1]=row[len(row)-1].rstrip('\n')
 					while len(row)<34:
@@ -153,7 +153,7 @@ def matchCADDtoSIFTformat(pathToSIFTformat, pathToCADDfile, pathToMergedFiles):
 					tempCADD.append(row)
 			#sorted, just to make comparisons run faster in code
 			sortedTempCADD=sorted(tempCADD, key=itemgetter(0))
-			
+
 
 			os.chdir(pathToMergedFiles)
 			for i in range(0, len(sortedTempVCFsift)):
@@ -179,9 +179,9 @@ if __name__=='__main__':
 	#change to VCF location
 	#pathToVCF='/home/tonya/pan_can_project/panData_UCprospective_DNA_mutations/patient-files-offtargets-removed-headers-added/'
 	#pathToOutput='/home/tonya/pan_can_project/panData_UCprospective_DNA_mutations/CADD-formatted-off-targets-removed-UCprospective/'
-	pathToCADDfile='/home/tonya/pan_can_project/panData_UCprospective_DNA_mutations/CADD-output-UCpro/'
-	pathToMergedFiles='/home/tonya/pan_can_project/panData_UCprospective_DNA_mutations/CADD-matched-VCF-UCpro/'
-	pathToSIFTformat='/home/tonya/pan_can_project/panData_UCprospective_DNA_mutations/tab_delimited_SIFT_files_prospective/'
+	pathToCADDfile='/home/tonya/pan_can_project/panData_UCretro_DNA_mutations/CADD-output/'
+	pathToMergedFiles='/home/tonya/pan_can_project/panData_UCretro_DNA_mutations/match-SIFT-CADD/'
+	pathToSIFTformat='/home/tonya/pan_can_project/panData_UCretro_DNA_mutations/tab-delimited-SIFT-predictions'
 	#formatForCADDinput(pathToVCF, pathToOutput);
 	#findCADD(pathToVCF, pathToCADDfile, pathToMergedFiles);
 	matchCADDtoSIFTformat(pathToSIFTformat, pathToCADDfile, pathToMergedFiles);
